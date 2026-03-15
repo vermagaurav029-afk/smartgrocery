@@ -11,6 +11,12 @@ from routers import auth, products, cart, comparison, alerts, dashboard, planner
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    # Auto-seed on first startup
+    try:
+        from data.seed import run_seed
+        run_seed()
+    except Exception as e:
+        print(f"Seed skipped: {e}")
     yield
 
 app = FastAPI(
